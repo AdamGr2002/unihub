@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Calendar, Users, FileText, PlusCircle } from 'lucide-react'
@@ -5,9 +6,9 @@ import { cn } from "@/lib/utils"
 
 const links = [
   { href: "/dashboard", label: "Overview", icon: FileText },
-  { href: "/dashboard/members", label: "Members", icon: Users },
-  { href: "/dashboard/events", label: "Events", icon: Calendar },
-  { href: "/dashboard/recruitment", label: "Recruitment", icon: PlusCircle },
+  { href: "/members", label: "Members", icon: Users },
+  { href: "/events", label: "Events", icon: Calendar },
+  { href: "/recruitment", label: "Recruitment", icon: PlusCircle },
 ]
 
 export function DashboardNav() {

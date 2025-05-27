@@ -1,16 +1,16 @@
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  UserButton
-} from '@clerk/nextjs'
-import './globals.css'
-import { Metadata } from 'next'
+"use client"; // Add this if not already present, as ConvexProvider uses context
 
-export const metadata: Metadata = {
-  title: 'UniHub - Home',
-  description: 'Welcome to UniHub, your university management platform',
-}
+import { ClerkProvider } from '@clerk/nextjs';
+import './globals.css';
+import { Metadata } from 'next';
+import { ConvexProvider, ConvexReactClient } from "convex/react";
+
+// export const metadata: Metadata = { // Metadata should be defined outside if layout is client component
+//   title: 'UniHub - Home',
+//   description: 'Welcome to UniHub, your university management platform',
+// };
+
+const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export default function RootLayout({
   children,
@@ -19,11 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body>
-          {children}
-        </body>
-      </html>
+      <ConvexProvider client={convex}>
+        <html lang="en">
+          <body>
+            {children}
+          </body>
+        </html>
+      </ConvexProvider>
     </ClerkProvider>
-  )
+  );
 }

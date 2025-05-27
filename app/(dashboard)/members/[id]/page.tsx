@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 export default async function MemberProfile(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   // In a real app, fetch member data using the ID
+
   const member = {
     id: params.id,
     name: "John Doe",

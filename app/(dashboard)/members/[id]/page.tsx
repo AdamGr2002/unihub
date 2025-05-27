@@ -3,7 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export default function MemberProfile({ params }: { params: { id: string } }) {
+export default async function MemberProfile(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   // In a real app, fetch member data using the ID
   const member = {
     id: params.id,

@@ -9,8 +9,8 @@ import { GlowingBackground } from "./components/glowing-background"
 import { FloatingElements } from "./components/floating-elements"
 import { FeatureGrid } from "./components/feature-grid"
 import { TestimonialCard } from "./components/testimonial-card"
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
-
+import {  SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
+import { Authenticated, Unauthenticated } from "convex/react";
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white relative overflow-hidden">
@@ -59,7 +59,8 @@ export default function LandingPage() {
               Stories
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-full transition-all duration-300"></span>
             </Link>
-            <SignedOut>
+            {/* Using Convex Unauthenticated */}
+            <Unauthenticated>
               <SignInButton mode="modal">
                 <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white">
                   Sign In
@@ -70,8 +71,9 @@ export default function LandingPage() {
                   Get Started
                 </Button>
               </SignUpButton>
-            </SignedOut>
-            <SignedIn>
+            </Unauthenticated>
+            {/* Using Convex Authenticated */}
+            <Authenticated>
               <Link
                 href="/dashboard" // Adjust if your dashboard route is different
                 className="text-slate-300 hover:text-white transition-colors duration-300 relative group"
@@ -79,8 +81,8 @@ export default function LandingPage() {
                 Dashboard
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-full transition-all duration-300"></span>
               </Link>
-              <UserButton afterSignOutUrl="/" />
-            </SignedIn>
+              <UserButton />
+            </Authenticated>
           </nav>
         </div>
       </motion.header>
@@ -357,7 +359,7 @@ export default function LandingPage() {
               <Link href="#" className="hover:text-white transition-colors">
                 Support
               </Link>
-              <span>© 2024 UniHub. All rights reserved.</span>
+              <span>© 2025 UniHub. All rights reserved.</span>
             </div>
           </div>
         </div>

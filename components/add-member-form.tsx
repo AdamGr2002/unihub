@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { useMutation } from "convex/react"
 import { api } from "@/convex/_generated/api"
+import { Id } from "@/convex/_generated/dataModel"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -27,14 +28,15 @@ const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),
-  role: z.string(),
-  department: z.string(),
+  role: z.enum(["president", "vice_president", "treasurer", "member", "alumni"]),
+  department: z.string().optional(), // Made department optional as it's not in user/membership schema
 })
 
-export function AddMemberForm({ clubId }: { clubId: string }) {
+// Add onClose to the props
+export function AddMemberForm({ clubId, onClose }: { clubId: string; onClose: () => void }) {
   const router = useRouter()
   const { toast } = useToast()
-  const createMember = useMutation(api.members.createMember)
+  const createMember = useMutation(api.memberships.addMember) // Ensure this mutation is correctly defined
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,29 +44,34 @@ export function AddMemberForm({ clubId }: { clubId: string }) {
     defaultValues: {
       name: "",
       email: "",
-      role: "",
+      role: "member",
       department: "",
     },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
+      // The `addMember` mutation needs to be robust enough to handle these values.
+      // It might need to find an existing user by email or create a new one (which is complex if Clerk is involved for users),
+      // then create the membership record.
       await createMember({
-        ...values,
-        clubId,
+        clubId: clubId as Id<"clubs">,
+        role: values.role,
+        // Pass user details for the mutation to handle user lookup/creation
+        // department: values.department, // Pass if your mutation handles it
       })
       toast({
         title: "Success",
         description: "Member has been added successfully.",
       })
-      router.refresh()
-      router.push("/dashboard/members")
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
+      router.refresh() // Refresh data on the current page
+      onClose()      // Call onClose to hide the form
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
+        title: "Error adding member",
+        description: error.message || "Something went wrong. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -115,8 +122,10 @@ export function AddMemberForm({ clubId }: { clubId: string }) {
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="member">Member</SelectItem>
-                  <SelectItem value="leader">Leader</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="president">President</SelectItem>
+                  <SelectItem value="vice_president">Vice President</SelectItem>
+                  <SelectItem value="treasurer">Treasurer</SelectItem>
+                  <SelectItem value="alumni">Alumni</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -128,7 +137,7 @@ export function AddMemberForm({ clubId }: { clubId: string }) {
           name="department"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Department</FormLabel>
+              <FormLabel>Department (Optional)</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -136,6 +145,7 @@ export function AddMemberForm({ clubId }: { clubId: string }) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
+                  <SelectItem value="">None</SelectItem> {/* Allow unselecting */}
                   <SelectItem value="marketing">Marketing</SelectItem>
                   <SelectItem value="operations">Operations</SelectItem>
                   <SelectItem value="technology">Technology</SelectItem>

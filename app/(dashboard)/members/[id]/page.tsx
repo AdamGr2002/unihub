@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Link from "next/link";
 
 export default async function MemberProfile(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -33,7 +34,9 @@ export default async function MemberProfile(props: { params: Promise<{ id: strin
             <p className="text-gray-600">{member.role}</p>
           </div>
         </div>
-        <Button>Edit Profile</Button>
+        <Button asChild>
+          <Link href={`/members/${member.id}/edit`}>Edit Profile</Link>
+        </Button>
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
